@@ -1,4 +1,5 @@
 .vs/
+out/
 Debug/
 Release/
 x64/
@@ -19,3 +20,5 @@ ipch/
 *.opensdf
 *.log
 *.tmp
+
+trash_code_with_useful_info.cpp
