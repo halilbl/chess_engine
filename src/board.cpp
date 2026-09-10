@@ -28,5 +28,5 @@ u64& Board::operator[](Piece piece) {
 }
 
 u64& Board::operator[](Color color) {
-	return piece_bitboards[idx(color)];
+	return color_bitboards[idx(color)];
 }

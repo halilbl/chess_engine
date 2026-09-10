@@ -26,7 +26,7 @@ void print_bit_board(u64 bb) {
 		bitboard &= bitboard - 1;
 	}
 
-	for (int i = RANK_COUNT; - 1 i >= 0; i--) {
+	for (int i = RANK_COUNT - 1; i >= 0; i--) {
 		for (int j = 0; j < FILE_COUNT; j++) {
 			std::cout << board[i][j];
 		}

@@ -10,7 +10,27 @@ Move& MoveGenerator::operator[](size_t i) {
 	return pseudo_legal_move_list[i];
 }
 
-void MoveGenerator::init_knight_attacks() {
+void MoveGenerator::init_king_moves() {
+	for (int sq = 0; sq < 64; sq++) {
+		int r = sq / 8;
+		int f = sq % 8;
+
+		u64 attacks = 0ULL;
+		for (auto& d : KING_DELTAS) {
+			int nr = r + d[0];
+			int nf = f + d[1];
+
+			if (nr >= RANK_COUNT || nr < 0 || nf >= FILE_COUNT || nf < 0) continue;
+
+			int sq_new = (nr * 8) + nf;
+
+			attacks |= 1ULL << sq_new;
+		}
+		zero_constraint_king_move_masks[sq] = attacks;
+	}
+}
+
+void MoveGenerator::init_knight_moves() {
 	for (int sq = 0; sq < 64; sq++) {
 		int r = sq / 8;
 		int f = sq % 8;
@@ -20,7 +40,7 @@ void MoveGenerator::init_knight_attacks() {
 			int nr = r + d[0];
 			int nf = f + d[1];
 
-			if (nr > 7 || nr < 0 || nf > 7 || nf < 0) continue;
+			if (nr >= RANK_COUNT || nr < 0 || nf >= FILE_COUNT || nf < 0) continue;
 
 			int sq_new = (nr * 8) + nf;
 

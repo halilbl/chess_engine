@@ -25,6 +25,10 @@ constexpr u64 BLACK_INITIAL_POS = 0xFFFF000000000000ULL;
 constexpr int MAX_MOVES_IN_A_TURN = 218;
 constexpr int MAX_AMOUNT_OF_SAME_PIECE = 10;
 
+constexpr int KING_DELTAS[8][2] = {
+    {1,1}, {1,-1}, {-1,1}, {-1,-1}, {1,0}, {-1,0}, {0,1}, {0,-1}
+};
+
 constexpr int KNIGHT_DELTAS[8][2] = {
         {1,2},{2,1},{2,-1},{1,-2},{-1,-2},{-2,-1},{-2,1},{-1,2}
 };
