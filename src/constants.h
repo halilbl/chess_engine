@@ -2,8 +2,13 @@
 
 #include "types.h"
 
-constexpr int PIECE_TYPE_AMOUNT = 6;
-constexpr int COLOR_TYPE_AMOUNT = 2;
+constexpr int PIECE_TYPE_COUNT = 6;
+constexpr int COLOR_TYPE_COUNT = 2;
+
+constexpr int SQUARE_COUNT = 64;
+
+constexpr int FILE_COUNT = 8;
+constexpr int RANK_COUNT = 8;
 
 //POSITION CONSTANTS
 constexpr u64 PAWNS_INITIAL_POS = 0x00FF00000000FF00ULL;

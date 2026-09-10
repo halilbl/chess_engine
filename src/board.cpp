@@ -13,8 +13,6 @@ Board::Board() {
 
 	turn = Color::WHITE;
 	board = INITAL_BOARD;
-
-	move_counter = 0;
 }
 
 u64 Board::operator[](Piece piece) const {
@@ -23,4 +21,12 @@ u64 Board::operator[](Piece piece) const {
 
 u64 Board::operator[](Color color) const {
 	return color_bitboards[idx(color)];
+}
+
+u64& Board::operator[](Piece piece) {
+	return piece_bitboards[idx(piece)];
+}
+
+u64& Board::operator[](Color color) {
+	return piece_bitboards[idx(color)];
 }

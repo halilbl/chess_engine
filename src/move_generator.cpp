@@ -3,11 +3,11 @@
 #include <bit>
 
 MoveGenerator::MoveGenerator() {
-	move_list_index = 0;
+	pseudo_legal_move_list_index = 0;
 }
 
 Move& MoveGenerator::operator[](size_t i) {
-	return move_list[i];
+	return pseudo_legal_move_list[i];
 }
 
 void MoveGenerator::init_knight_attacks() {
@@ -26,7 +26,7 @@ void MoveGenerator::init_knight_attacks() {
 
 			attacks |= 1ULL << sq_new;
 		}
-		knight_attack_pos[sq] = attacks;
+		zero_constraint_knight_move_masks[sq] = attacks;
 	}
 }
 
@@ -38,15 +38,15 @@ void MoveGenerator::generateKnightMoves(const Color color, const Board& board) {
 
 	while (temp) {
 		int sq = std::countr_zero(temp);
-		u64 attacks_pos = knight_attack_pos[sq];
+		u64 attacks_pos = zero_constraint_knight_move_masks[sq];
 
 		attacks_pos = attacks_pos & ~own_pieces;
 
 		while (attacks_pos) {
 			int sq_atck = std::countr_zero(attacks_pos);
 
-			move_list[move_list_index].from = sq;
-			move_list[move_list_index++].to = sq_atck;
+			pseudo_legal_move_list[pseudo_legal_move_list_index].from = sq;
+			pseudo_legal_move_list[pseudo_legal_move_list_index++].to = sq_atck;
 
 			attacks_pos &= attacks_pos - 1;
 		}

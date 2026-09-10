@@ -7,14 +7,14 @@
 
 class MoveGenerator {
 private:
-	Move move_list[MAX_MOVES_IN_A_TURN];
+	std::array<Move, MAX_MOVES_IN_A_TURN> pseudo_legal_move_list;
 
-	u64 knight_attack_pos[64];
+	std::array<u64, SQUARE_COUNT> zero_constraint_knight_move_masks;
 
 public:
 	MoveGenerator();
 
-	size_t move_list_index;
+	size_t pseudo_legal_move_list_index;
 
 	Move& operator[](size_t i);
 
