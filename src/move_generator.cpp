@@ -6,8 +6,16 @@ MoveGenerator::MoveGenerator() {
 	pseudo_legal_move_list_index = 0;
 }
 
-Move& MoveGenerator::operator[](size_t i) {
+Move& MoveGenerator::operator[](size_t i) { //Testing purposes
 	return pseudo_legal_move_list[i];
+}
+
+u64 MoveGenerator::king_move_mask(size_t sq) const { //Testing purposes
+	return zero_constraint_king_move_masks[sq];
+}
+
+u64 MoveGenerator::knight_move_mask(size_t sq) const { //Testing purposes
+	return zero_constraint_knight_move_masks[sq];
 }
 
 void MoveGenerator::init_king_moves() {
@@ -27,6 +35,27 @@ void MoveGenerator::init_king_moves() {
 			attacks |= 1ULL << sq_new;
 		}
 		zero_constraint_king_move_masks[sq] = attacks;
+	}
+}
+
+void MoveGenerator::generate_king_moves(const Color color, const Board& board) {
+	u64 own_pieces = board[color];
+	u64 king = board[Piece::KING] & own_pieces;
+
+	//TODO: if king == 0, countr_zero returns 64 -> out-of-bounds access below. Guard this once captures/missing king become possible.
+	int sq = std::countr_zero(king);
+
+	u64 attacks = zero_constraint_king_move_masks[sq];
+
+	attacks &= ~own_pieces;
+
+	while (attacks) {
+		int sq_new = std::countr_zero(attacks);
+
+		pseudo_legal_move_list[pseudo_legal_move_list_index].from = sq;
+		pseudo_legal_move_list[pseudo_legal_move_list_index++].to = sq_new;
+
+		attacks &= attacks - 1;
 	}
 }
 

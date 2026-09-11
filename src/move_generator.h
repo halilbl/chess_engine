@@ -15,11 +15,15 @@ private:
 public:
 	MoveGenerator();
 
+	Move& operator[](size_t i); //Testing purposes
+
+	u64 king_move_mask(size_t sq) const;   //Testing purposes
+	u64 knight_move_mask(size_t sq) const; //Testing purposes
+
 	size_t pseudo_legal_move_list_index;
 
-	Move& operator[](size_t i);
-
 	void init_king_moves();
+	void generate_king_moves(const Color color, const Board& board);
 
 	void init_knight_moves();
 	void generateKnightMoves(const Color color, const Board& board);
