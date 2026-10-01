@@ -18,10 +18,10 @@ add_executable(chess_engine
     src/board.cpp
     src/move_generator.cpp
     src/bitboard_utils.cpp
-)
+  )
 target_include_directories(chess_engine PRIVATE src)
 
-add_executable(chess_tests tests/test_main.cpp)
+add_executable(chess_tests tests/test_main.cpp  )
 target_include_directories(chess_tests PRIVATE src)
 target_link_libraries(chess_tests PRIVATE Catch2::Catch2WithMain)
 

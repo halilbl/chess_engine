@@ -1,4 +1,6 @@
-.vs/
+.vscode/
+build/
+# old vs lines
 out/
 Debug/
 Release/
@@ -13,6 +15,7 @@ ipch/
 *.ilk
 *.exp
 *.lib
+# old vs lines
 *.idb
 *.user
 *.suo
@@ -22,3 +25,6 @@ ipch/
 *.tmp
 
 trash_code_with_useful_info.cpp
+new_knowledge.txt
+PLAN.md
+diff_logs.txt
