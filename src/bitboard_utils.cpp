@@ -2,11 +2,11 @@
 #include "constants.h"
 
 #include <iostream>
-#include <cstring>
 #include <bit>
 #include <array>
+#include <random>
 
-void print_bit_board(u64 bb) {
+void bbu::print_bit_board(u64 bb) {
 	std::array<std::array<char, 8>, 8> board;
 
 	for (auto& row : board) {
@@ -32,4 +32,15 @@ void print_bit_board(u64 bb) {
 		}
 		std::cout << "\n";
 	}
+
+	std::cout << "\n\n";
+}
+
+u64 bbu::randu64() {
+	std::random_device rd; //TODO:with -O0 it takes ~5 seconds to execute the first two lines, make it static or smth else
+	std::mt19937_64 gen(rd());
+
+	u64 N = gen();
+
+	return N;
 }
