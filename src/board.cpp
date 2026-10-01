@@ -12,7 +12,7 @@ Board::Board() {
 	color_bitboards[idx(Color::BLACK)] = BLACK_INITIAL_POS;
 
 	turn = Color::WHITE;
-	board = INITAL_BOARD;
+	board_bitboard = INITAL_BOARD;
 }
 
 u64 Board::operator[](Piece piece) const {
