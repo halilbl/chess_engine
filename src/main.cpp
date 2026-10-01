@@ -3,16 +3,16 @@
 #include "board.h"
 #include "move_generator.h"
 #include "bitboard_utils.h"
+#include "types.h"
+
+#include <random>
+#include <cmath>
+#include <bitset>
+#include <type_traits>
+#include <bit>
 
 int main() {
 
-	Board board{};
-	MoveGenerator mg{};
-
-	mg.init_king_moves();
-
-	print_bit_board(mg.king_move_mask(36));
-	
 
 	return 0;
 }

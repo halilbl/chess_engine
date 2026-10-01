@@ -2,6 +2,8 @@
 
 #include "types.h"
 
+#include <array>
+
 constexpr int PIECE_TYPE_COUNT = 6;
 constexpr int COLOR_TYPE_COUNT = 2;
 
@@ -33,4 +35,10 @@ constexpr int KNIGHT_DELTAS[8][2] = {
         {1,2},{2,1},{2,-1},{1,-2},{-1,-2},{-2,-1},{-2,1},{-1,2}
 };
 
-constexpr u64 u64_TERMINATOR = 0ULL;
+constexpr int BISHOP_DELTAS[4][2] = { //directions of a bishop
+    {1,1}, {1,-1}, {-1,-1}, {-1,1}
+};
+
+constexpr size_t bishop_rook_deltas_size = 4;
+
+constexpr int MAX_SUBSETS_OF_BISHOP_OCP = 512; //maximum of 9 squares available (considering omitting edge squares), hence maximum subset amount  = 2^9
