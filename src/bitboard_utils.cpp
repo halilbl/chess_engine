@@ -6,7 +6,7 @@
 #include <array>
 #include <random>
 
-void bbu::print_bit_board(u64 bb) {
+void bbu::print_bit_board(u64 bb) { //prints the board out to visualize the chess board
 	std::array<std::array<char, 8>, 8> board;
 
 	for (auto& row : board) {
@@ -37,7 +37,7 @@ void bbu::print_bit_board(u64 bb) {
 }
 
 u64 bbu::randu64() {
-	std::random_device rd; //TODO:with -O0 it takes ~5 seconds to execute the first two lines, make it static or smth else
+	std::random_device rd; //TODO:with -O0 it takes ~5 seconds to execute the first two lines, make it static in the future.
 	std::mt19937_64 gen(rd());
 
 	u64 N = gen();

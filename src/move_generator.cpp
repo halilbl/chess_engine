@@ -30,7 +30,7 @@ u64 MoveGenerator::get_bishop_magic(size_t sq) const { //Testing purposes
 	return bishop_magic_list[sq];
 }
 
-u64 MoveGenerator::compute_occupancy_mask(int sq, const int deltas[][2], size_t deltas_size) { //occupancy bitboard without blockers
+u64 MoveGenerator::compute_occupancy_mask(int sq, std::array<std::array<int,2>,4> deltas, size_t deltas_size) { //occupancy bitboard without blockers
 	int r = sq / 8;
 	int f = sq % 8;
 
@@ -62,13 +62,13 @@ u64 MoveGenerator::compute_occupancy_mask(int sq, const int deltas[][2], size_t 
 	return mask;
 }
 
-u64 MoveGenerator::compute_sliding_piece_attack(int sq, u64 ocp, const int deltas[][2]) { //attack bitboard with blockers
+u64 MoveGenerator::compute_sliding_piece_attack(int sq, u64 ocp, std::array<std::array<int,2>,4> deltas) { //attack bitboard with blockers
 	int r = sq / 8;
 	int f = sq % 8;
 
 	u64 attacks = 0ULL;
 
-	for (auto& d : BISHOP_DELTAS) {
+	for (auto& d : deltas) {
 		int nr = r + d[0];
 		int nf = f + d[1];
 
@@ -87,8 +87,8 @@ u64 MoveGenerator::compute_sliding_piece_attack(int sq, u64 ocp, const int delta
 	return attacks;
 }
 
-u64 MoveGenerator::generate_magic(int sq) { //returns the magic number and fills lookup table, a bruteforce algorithm to map indexes
-	u64 mask = compute_occupancy_mask(sq, BISHOP_DELTAS, bishop_rook_deltas_size);
+u64 MoveGenerator::generate_magic(int sq, std::array<std::array<int,2>,4> deltas) { //returns the magic number and fills lookup table, a bruteforce algorithm to map indexes
+	u64 mask = compute_occupancy_mask(sq, deltas, bishop_rook_deltas_size);
 
 	int relevant_bits = std::popcount(mask);
 	int shift = 64 - relevant_bits;
@@ -100,7 +100,7 @@ u64 MoveGenerator::generate_magic(int sq) { //returns the magic number and fills
 	u64 subset = 0ULL;
 	for (size_t i = 0; i < subset_count; i++) { 
 		subsets[i] = subset;
-		attacks[i] = compute_sliding_piece_attack(sq, subset, BISHOP_DELTAS);
+		attacks[i] = compute_sliding_piece_attack(sq, subset, deltas);
 
 		subset = (subset - mask) & mask;
 	}
@@ -144,9 +144,9 @@ u64 MoveGenerator::generate_magic(int sq) { //returns the magic number and fills
 	}
 }
 
-void MoveGenerator::init_bishop_lists() { //call this function to initialize everything
+void MoveGenerator::init_bishop_lists(std::array<std::array<int,2>,4> deltas) { //call this function to initialize everything
 	for (int sq = 0; sq < SQUARE_COUNT; sq++) {
-		bishop_magic_list[sq] = generate_magic(sq); //this process utilizes all sliding piece funcitons one by one
+		bishop_magic_list[sq] = generate_magic(sq, deltas); //this process utilizes all sliding piece funcitons one by one
 		//themain theme of the project was to write all these methods so that they can apply to any sliding piece
 	}
 }

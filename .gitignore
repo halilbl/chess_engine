@@ -1,6 +1,6 @@
 .vscode/
 build/
-# old vs lines
+# old vs lines in case i decide to go back to vs
 out/
 Debug/
 Release/
@@ -15,7 +15,6 @@ ipch/
 *.ilk
 *.exp
 *.lib
-# old vs lines
 *.idb
 *.user
 *.suo

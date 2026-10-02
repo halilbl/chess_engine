@@ -39,6 +39,10 @@ constexpr int BISHOP_DELTAS[4][2] = { //directions of a bishop
     {1,1}, {1,-1}, {-1,-1}, {-1,1}
 };
 
+constexpr std::array<std::array<int,2>,4> BISHOP_DELTAS_STD_ARRAY = {{
+    {1,1}, {1,-1}, {-1,-1}, {-1,1} //still not deleting C typed constexpr because i do not trust this constexpr std::array and i don't know much about constepxr objects so as to avoid technical debt i will only use this variable for range based loops which require.begin() etc.. 
+}};
+
 constexpr size_t bishop_rook_deltas_size = 4;
 
 constexpr int MAX_SUBSETS_OF_BISHOP_OCP = 512; //maximum of 9 squares available (considering omitting edge squares), hence maximum subset amount  = 2^9
