@@ -37,8 +37,8 @@ void bbu::print_bit_board(u64 bb) { //prints the board out to visualize the ches
 }
 
 u64 bbu::randu64() {
-	std::random_device rd; //TODO:with -O0 it takes ~5 seconds to execute the first two lines, make it static in the future.
-	std::mt19937_64 gen(rd());
+	static std::random_device rd; //TODO:with -O0 it takes ~5 seconds to execute the first two lines, make it static in the future.
+	static std::mt19937_64 gen(rd());
 
 	u64 N = gen();
 
