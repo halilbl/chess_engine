@@ -13,30 +13,35 @@ private:
 	std::array<u64, SQUARE_COUNT> zero_constraint_king_move_masks;
 	std::array<u64, SQUARE_COUNT> zero_constraint_knight_move_masks;
 
-	inline static std::array<u64, SQUARE_COUNT> bishop_magic_list;
-	inline static std::array<std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP>, SQUARE_COUNT> bishop_lookup_table;
+	inline static std::array<u64, SQUARE_COUNT> bishop_magic;
+	inline static std::array<std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP>, SQUARE_COUNT> bishop_move_lookup_table;//stores move boards for each square obtained by subsets
+	inline static std::array<std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP>, SQUARE_COUNT> bishop_subset_lookup_table;//stores subsets for each square obtained by subsets
+	inline static std::array<u64, SQUARE_COUNT> bishop_occupancy_mask;
 
 public:
 	MoveGenerator();
 
 	Move& operator[](size_t i); //Testing purposes*
 	
-	u64 generate_magic(int sq, std::array<std::array<int,2>,4> deltas);	
-
-	void init_bishop_lists(std::array<std::array<int,2>,4> deltas);
+	void init_magic();	
+	u64 generate_magic(const int sq);
+	int generate_magic_index(const int sq, const u64 subset);
 
 	u64 get_king_ocp_mask(size_t sq) const;   //Testing purposes
 	u64 get_knight_ocp_mask(size_t sq) const; //Testing purposes
-	std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP> get_bishop_subsets(size_t sq) const; //Testing purposes
+	std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP> get_bishop_move(size_t sq) const; //Testing purposes
+	std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP> get_bishop_subset(size_t sq) const; //Testing purposes
 	u64 get_bishop_magic(size_t sq) const; //Testing purposes
+	u64 get_bishop_ocp_mask(size_t sq) const;
 
-	u64 compute_occupancy_mask(int sq, std::array<std::array<int,2>,4> deltas, size_t deltas_size);
+	void init_occupancy_mask(std::array<std::array<int,2>,4> deltas);
 
 	size_t pseudo_legal_move_list_index;
 
-	u64 compute_sliding_piece_attack(int sq, u64 ocp, std::array<std::array<int,2>,4>);
+	void init_lookup_table(std::array<std::array<int,2>, 4>);
+	//TODO: make this function static, it only needs to be called once
 
-	void make_bishop_lookup_table();
+	void generate_bishop_moves(const Color color, const Board& board);
 
 	void init_king_occupancy_masks();
 	void generate_king_moves(const Color color, const Board& board);
