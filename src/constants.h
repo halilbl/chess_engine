@@ -35,12 +35,8 @@ constexpr int KNIGHT_DELTAS[8][2] = {
         {1,2},{2,1},{2,-1},{1,-2},{-1,-2},{-2,-1},{-2,1},{-1,2}
 };
 
-constexpr int BISHOP_DELTAS[4][2] = { //directions of a bishop
-    {1,1}, {1,-1}, {-1,-1}, {-1,1}
-};
-
-constexpr std::array<std::array<int,2>,4> BISHOP_DELTAS_STD_ARRAY = {{
-    {1,1}, {1,-1}, {-1,-1}, {-1,1} //still not deleting C typed constexpr because i do not trust this constexpr std::array and i don't know much about constepxr objects so as to avoid technical debt i will only use this variable for range based loops which require.begin() etc.. 
+constexpr std::array<std::array<int,2>,4> BISHOP_DELTAS = {{
+    {1,1}, {1,-1}, {-1,-1}, {-1,1} 
 }};
 
 constexpr size_t bishop_rook_deltas_size = 4;
