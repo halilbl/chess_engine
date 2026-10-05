@@ -13,7 +13,9 @@ private:
 	std::array<u64, SQUARE_COUNT> zero_constraint_king_move_masks;
 	std::array<u64, SQUARE_COUNT> zero_constraint_knight_move_masks;
 
-	inline static std::array<u64, SQUARE_COUNT> bishop_magic_list;
+	inline static std::array<u64, SQUARE_COUNT> bishop_magic;
+	inline static std::array<u64, SQUARE_COUNT> bishop_occupancy_mask;
+	inline static std::array<u64, SQUARE_COUNT> bishop_attack;
 	inline static std::array<std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP>, SQUARE_COUNT> bishop_lookup_table;
 
 public:
@@ -30,7 +32,7 @@ public:
 	std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP> get_bishop_subsets(size_t sq) const; //Testing purposes
 	u64 get_bishop_magic(size_t sq) const; //Testing purposes
 
-	u64 compute_occupancy_mask(int sq, std::array<std::array<int,2>,4> deltas, size_t deltas_size);
+	u64 compute_occupancy_mask(int sq, std::array<std::array<int,2>,4> deltas);
 
 	size_t pseudo_legal_move_list_index;
 
