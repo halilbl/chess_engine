@@ -13,17 +13,19 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
-add_executable(chess_engine
-    src/main.cpp
+# engine code shared by the executable and the tests
+add_library(chess_core STATIC
     src/board.cpp
     src/move_generator.cpp
     src/bitboard_utils.cpp
   )
-target_include_directories(chess_engine PRIVATE src)
+target_include_directories(chess_core PUBLIC src)
 
-add_executable(chess_tests tests/test_main.cpp  )
-target_include_directories(chess_tests PRIVATE src)
-target_link_libraries(chess_tests PRIVATE Catch2::Catch2WithMain)
+add_executable(chess_engine src/main.cpp)
+target_link_libraries(chess_engine PRIVATE chess_core)
+
+add_executable(chess_tests tests/test_main.cpp)
+target_link_libraries(chess_tests PRIVATE chess_core Catch2::Catch2WithMain)
 
 enable_testing()
 add_test(NAME ChessTests COMMAND chess_tests)
