@@ -37,10 +37,41 @@ void bbu::print_bit_board(u64 bb) { //prints the board out to visualize the ches
 }
 
 u64 bbu::randu64() {
-	std::random_device rd; //TODO:with -O0 it takes ~5 seconds to execute the first two lines, make it static in the future.
-	std::mt19937_64 gen(rd());
+	static std::random_device rd; 
+	static std::mt19937_64 gen(rd());
 
 	u64 N = gen();
 
 	return N;
+}
+
+u64 bbu::ray_walk(int sq, u64 ocp, std::array<std::array<int, 2>, 4> deltas, bool omit_edge) { //reference ray walk, blocker squares are included
+	int r = sq / 8;
+	int f = sq % 8;
+
+	u64 attacks = 0ULL;
+	for (auto& d : deltas) {
+		int nr = r + d[0];
+		int nf = f + d[1];
+
+		while (nr >= 0 && nr < RANK_COUNT && nf >= 0 && nf < FILE_COUNT) {
+			int next_nr = nr + d[0];
+			int next_nf = nf + d[1];
+
+			bool is_last_square = !(next_nr >= 0 && next_nr < RANK_COUNT && next_nf >= 0 && next_nf < FILE_COUNT);
+
+			if (omit_edge && is_last_square) break; //edge square in the direction of the ray is left out (occupancy mask)
+
+			u64 bit = 1ULL << (nr * 8 + nf);
+
+			attacks |= bit;
+
+			if (ocp & bit) break; //blocker: attacked, nothing behind it
+
+			nr = next_nr;
+			nf = next_nf;
+		}
+	}
+
+	return attacks;
 }
