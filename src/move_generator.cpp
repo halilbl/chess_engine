@@ -6,31 +6,35 @@
 #include <iostream>
 #include <utility>
 
-MoveGenerator::MoveGenerator() {
-	pseudo_legal_move_list_index = 0;
+namespace {
+	/*Switched to namespaces instead of a class. This is an anonymous namespace which roughly has the same attributes.An anonmyous namespace variables inherently has internal linkage and they do not . Which means these variables are not and can't be linked to another file, which provides something like privacy.*/
+
+	std::array<u64, SQUARE_COUNT> king_occupancy;
+	std::array<u64, SQUARE_COUNT> knight_occupancy;
+	std::array<u64, SQUARE_COUNT> bishop_occupancy_mask;
+
+	std::array<u64, SQUARE_COUNT> bishop_magic;
+	std::array<u64, SQUARE_COUNT> bishop_attack;
+	std::array<std::array<u64, MAX_BISHOP_OCP>, SQUARE_COUNT> bishop_lookup_table;
 }
 
-Move& MoveGenerator::operator[](size_t i) { //Testing purposes
-	return pseudo_legal_move_list[i];
+u64 MoveGenerator::get_king_ocp_mask(size_t sq) { //Testing purposes
+	return king_occupancy[sq];
 }
 
-u64 MoveGenerator::get_king_ocp_mask(size_t sq) const { //Testing purposes
-	return zero_constraint_king_move_masks[sq];
+u64 MoveGenerator::get_knight_ocp_mask(size_t sq) { //Testing purposes
+	return knight_occupancy[sq];
 }
 
-u64 MoveGenerator::get_knight_ocp_mask(size_t sq) const { //Testing purposes
-	return zero_constraint_knight_move_masks[sq];
-}
-
-std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP> MoveGenerator::get_bishop_subsets(size_t sq) const { //Testing purposes
+std::array<u64, MAX_BISHOP_OCP> MoveGenerator::get_bishop_subsets(size_t sq) { //Testing purposes
 	return bishop_lookup_table[sq];
 }
 
-u64 MoveGenerator::get_bishop_magic(size_t sq) const { //Testing purposes
+u64 MoveGenerator::get_bishop_magic(size_t sq) { //Testing purposes
 	return bishop_magic[sq];
 }
 
-std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP> MoveGenerator::get_bishop_array(size_t sq) const{
+std::array<u64, MAX_BISHOP_OCP> MoveGenerator::get_bishop_array(size_t sq) {
 	return bishop_lookup_table[sq];
 }
 
@@ -98,8 +102,8 @@ u64 MoveGenerator::generate_magic(int sq, std::array<std::array<int,2>,4> deltas
 	int shift = 64 - relevant_bits;
 	size_t subset_count = 1ULL << relevant_bits;
 
-	std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP> subsets{}; 
-	std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP> attacks{}; 
+	std::array<u64, MAX_BISHOP_OCP> subsets{}; 
+	std::array<u64, MAX_BISHOP_OCP> attacks{}; 
 
 	u64 subset = 0ULL;
 	for (size_t i = 0; i < subset_count; i++) { 
@@ -109,8 +113,8 @@ u64 MoveGenerator::generate_magic(int sq, std::array<std::array<int,2>,4> deltas
 		subset = (subset - mask) & mask;
 	}
 
-	std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP> table{}; 
-	std::array<int, MAX_SUBSETS_OF_BISHOP_OCP> table_epoch{};  
+	std::array<u64, MAX_BISHOP_OCP> table{}; 
+	std::array<int, MAX_BISHOP_OCP> table_epoch{};  
 	int epoch = 0;
 
 	while (true) {
@@ -171,7 +175,7 @@ void MoveGenerator::init_king_occupancy_masks() { //comptues all possible pseudo
 
 			attacks |= 1ULL << sq_new;
 		}
-		zero_constraint_king_move_masks[sq] = attacks;
+		king_occupancy[sq] = attacks;
 	}
 }
 
@@ -184,15 +188,12 @@ void MoveGenerator::generate_king_moves(const Color color, const Board& board) {
 	//TODO: if king == 0, countr_zero returns 64 -> out-of-bounds access below. Guard this once captures/missing king become possible.
 	int sq = std::countr_zero(king);
 
-	u64 attacks = zero_constraint_king_move_masks[sq];
+	u64 attacks = king_occupancy[sq];
 
 	attacks &= ~own_pieces;
 
 	while (attacks) {
 		int sq_new = std::countr_zero(attacks);
-
-		pseudo_legal_move_list[pseudo_legal_move_list_index].from = sq;
-		pseudo_legal_move_list[pseudo_legal_move_list_index++].to = sq_new;
 
 		attacks &= attacks - 1;
 	}
@@ -214,7 +215,7 @@ void MoveGenerator::init_knight_occupancy_masks() { //computes all possible move
 
 			attacks |= 1ULL << sq_new;
 		}
-		zero_constraint_knight_move_masks[sq] = attacks;
+		knight_occupancy[sq] = attacks;
 	}
 }
 
@@ -226,15 +227,12 @@ void MoveGenerator::generate_knight_moves(const Color color, const Board& board)
 
 	while (temp) {
 		int sq = std::countr_zero(temp);
-		u64 attacks_pos = zero_constraint_knight_move_masks[sq];
+		u64 attacks_pos = knight_occupancy[sq];
 
 		attacks_pos = attacks_pos & ~own_pieces;
 
 		while (attacks_pos) {
 			int sq_atck = std::countr_zero(attacks_pos);
-
-			pseudo_legal_move_list[pseudo_legal_move_list_index].from = sq;
-			pseudo_legal_move_list[pseudo_legal_move_list_index++].to = sq_atck;
 
 			attacks_pos &= attacks_pos - 1;
 		}
