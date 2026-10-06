@@ -31,6 +31,7 @@ public:
 	u64 get_knight_ocp_mask(size_t sq) const; //Testing purposes
 	std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP> get_bishop_subsets(size_t sq) const; //Testing purposes
 	u64 get_bishop_magic(size_t sq) const; //Testing purposes
+	std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP> get_bishop_array(size_t sq) const;
 
 	u64 compute_occupancy_mask(int sq, std::array<std::array<int,2>,4> deltas);
 

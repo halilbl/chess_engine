@@ -30,6 +30,10 @@ u64 MoveGenerator::get_bishop_magic(size_t sq) const { //Testing purposes
 	return bishop_magic[sq];
 }
 
+std::array<u64, MAX_SUBSETS_OF_BISHOP_OCP> MoveGenerator::get_bishop_array(size_t sq) const{
+	return bishop_lookup_table[sq];
+}
+
 u64 MoveGenerator::compute_occupancy_mask(int sq, std::array<std::array<int,2>,4> deltas) { //occupancy bitboard without blockers
 	int r = sq / 8;
 	int f = sq % 8;
@@ -62,7 +66,7 @@ u64 MoveGenerator::compute_occupancy_mask(int sq, std::array<std::array<int,2>,4
 	return mask;
 }
 
-u64 MoveGenerator::compute_sliding_piece_attack(int sq, u64 ocp, std::array<std::array<int,2>,4> deltas) { //attack bitboard with blockers
+u64 MoveGenerator::compute_sliding_piece_attack(int sq, u64 subset, std::array<std::array<int,2>,4> deltas) { //attack bitboard with blockers
 	int r = sq / 8;
 	int f = sq % 8;
 
@@ -77,7 +81,7 @@ u64 MoveGenerator::compute_sliding_piece_attack(int sq, u64 ocp, std::array<std:
 
 			attacks |= 1ULL << new_sq;
 
-			if (ocp & (1ULL << new_sq)) break;
+			if (subset & (1ULL << new_sq)) break;
 
 			nr += d[0];
 			nf += d[1];
