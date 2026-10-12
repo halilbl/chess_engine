@@ -11,36 +11,42 @@
 #include <bit>
 #include <set>
 
-MoveGenerator mg;
+namespace mg = MoveGenerator;
 
 TEST_CASE("compute_sliding_piece_attack() for bishop", "[move_generator]"){
     int sq = GENERATE(range(0,64));
     auto mask = GENERATE(take(200, random(0ULL, ~0ULL)));
 
     CAPTURE(sq, mask);
-    CHECK(mg.compute_sliding_piece_attack(sq, mask, BISHOP_DELTAS) == bbu::ray_walk(sq, mask, BISHOP_DELTAS, false));
+    CHECK(mg::compute_sliding_piece_attack(sq, mask, BISHOP_DELTAS) == bbu::ray_walk(sq, mask, BISHOP_DELTAS, false));
 }
 
 TEST_CASE("compute_occupancy_mask() for bishop", "[move_generator]"){
     int sq = GENERATE(range(0,64));
 
     CAPTURE(sq);
-    CHECK(mg.compute_occupancy_mask(sq, BISHOP_DELTAS) == bbu::ray_walk(sq, 0ULL, BISHOP_DELTAS, true));
+    CHECK(mg::compute_occupancy_mask(sq, BISHOP_DELTAS) == bbu::ray_walk(sq, 0ULL, BISHOP_DELTAS, true));
 }
 
 TEST_CASE("generate_magic() for bishop", "[move_generator]"){
-    size_t idx = GENERATE(range(0, MAX_SUBSETS_OF_BISHOP_OCP));
-    int sq = 36;
+    mg::init_bishop_lists(BISHOP_DELTAS);
 
-    u64 mask = mg.compute_occupancy_mask(sq, BISHOP_DELTAS);
-    u64 subset = (subset - mask) & mask;
+        int sq = GENERATE(range(0, SQUARE_COUNT));
 
-    mg.init_bishop_lists(BISHOP_DELTAS);
+        u64 mask = mg::compute_occupancy_mask(sq, BISHOP_DELTAS);
+        u64 subset = mask;
 
-    CAPTURE(sq, mask, subset);
+        int rb = std::popcount(mask);
+        int subset_count = 1ULL << rb;
 
-    auto arr = mg.get_bishop_array(sq);
-    auto it = std::find(arr.begin(), arr.end(), bbu::ray_walk(sq, subset, BISHOP_DELTAS, false));
+        auto arr = mg::get_bishop_array(sq);
+        CAPTURE(sq, mask, subset);
 
-    CHECK(it != arr.end());
+        for(int i = 0; i < subset_count; i++){ 
+            size_t index = (mg::bishop_magic[sq] * subset) >> (64 - rb);
+
+            CHECK(arr[index] == bbu::ray_walk(sq, subset, BISHOP_DELTAS, false));
+            subset = (subset - 1) & mask;
+        }
+    
 }
