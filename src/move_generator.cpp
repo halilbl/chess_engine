@@ -5,17 +5,12 @@
 #include <bit>
 #include <iostream>
 #include <utility>
+#include <vector>
 
 namespace {
-	/*Switched to namespaces instead of a class. This is an anonymous namespace which roughly has the same attributes.An anonmyous namespace variables inherently has internal linkage and they do not . Which means these variables are not and can't be linked to another file, which provides something like privacy.*/
+	/*Switched to namespaces instead of a class. This is an anonymous namespace which roughly has the same attributes.An anonmyous namespace variables inherently has internal linkage and they do not have an explicitly defined name. Which means these variables are not and can't be linked to another file, which provides something like encapsulation.*/
 
-	std::array<u64, SQUARE_COUNT> king_occupancy;
-	std::array<u64, SQUARE_COUNT> knight_occupancy;
-	std::array<u64, SQUARE_COUNT> bishop_occupancy_mask;
-
-	std::array<u64, SQUARE_COUNT> bishop_magic;
-	std::array<u64, SQUARE_COUNT> bishop_attack;
-	std::array<std::array<u64, MAX_BISHOP_OCP>, SQUARE_COUNT> bishop_lookup_table;
+	//removed anon namespace because testing needs publicity
 }
 
 u64 MoveGenerator::get_king_ocp_mask(size_t sq) { //Testing purposes
@@ -95,68 +90,71 @@ u64 MoveGenerator::compute_sliding_piece_attack(int sq, u64 subset, std::array<s
 	return attacks;
 }
 
-u64 MoveGenerator::generate_magic(int sq, std::array<std::array<int,2>,4> deltas) { //returns the magic number and fills lookup table, a bruteforce algorithm to map indexes
-	u64 mask = compute_occupancy_mask(sq, deltas);
+void MoveGenerator::generate_magic(std::array<std::array<int,2>,4> deltas) { //returns the magic number and fills lookup table, a bruteforce algorithm to map indexes
+	for(int sq = 0; sq < SQUARE_COUNT; sq++){
+		u64 mask = compute_occupancy_mask(sq, deltas);
 
-	int relevant_bits = std::popcount(mask);
-	int shift = 64 - relevant_bits;
-	size_t subset_count = 1ULL << relevant_bits;
+		int relevant_bits = std::popcount(mask);
+		int shift = 64 - relevant_bits;
+		size_t subset_count = 1ULL << relevant_bits;
 
-	std::array<u64, MAX_BISHOP_OCP> subsets{}; 
-	std::array<u64, MAX_BISHOP_OCP> attacks{}; 
+		std::vector<u64> subsets(MAX_ROOK_OCP); 
+		std::vector<u64> attacks(MAX_ROOK_OCP); 
 
-	u64 subset = 0ULL;
-	for (size_t i = 0; i < subset_count; i++) { 
-		subsets[i] = subset;
-		attacks[i] = compute_sliding_piece_attack(sq, subset, deltas);
+		u64 subset = mask;
+		for (size_t i = 0; i < subset_count; i++) { 
+			subsets[i] = subset;
+			attacks[i] = compute_sliding_piece_attack(sq, subset, deltas);
 
-		subset = (subset - mask) & mask;
-	}
-
-	std::array<u64, MAX_BISHOP_OCP> table{}; 
-	std::array<int, MAX_BISHOP_OCP> table_epoch{};  
-	int epoch = 0;
-
-	while (true) {
-		u64 magic = bbu::randu64() & bbu::randu64() & bbu::randu64(); 
-
-		epoch++;
-		bool collision_free = true;
-
-		size_t index = 0;
-		for (size_t i = 0; i < subset_count; i++) {
-			index = (subsets[i] * magic) >> shift;
-
-			if (table_epoch[index] != epoch) { 
-				table_epoch[index] = epoch;
-				table[index] = attacks[i];
-			}
-			else if (table[index] != attacks[i]) { 
-				collision_free = false;
-				break;
-			}
+			subset = (subset - 1) & mask;
 		}
 
-		if (collision_free) {
-			bishop_lookup_table[sq].fill(0ULL);
+		std::vector<u64> table(MAX_ROOK_OCP);  //MAX_ROOK_OCP is the largest
+		std::vector<int> table_epoch(MAX_ROOK_OCP);  
+		int epoch = 0;
 
-			for (size_t i = 0; i < subset_count; i++) { //initializes lookup table for this square
+		while (true) {
+			u64 magic = bbu::randu64() & bbu::randu64() & bbu::randu64(); 
+
+			epoch++;
+			bool collision_free = true;
+
+			size_t index = 0;
+			for (size_t i = 0; i < subset_count; i++) {
 				index = (subsets[i] * magic) >> shift;
-				//index can be printed out here to test this funciton
-				bishop_lookup_table[sq][index] = attacks[i]; //lookup table gets filled
-				
+
+				if (table_epoch[index] != epoch) { 
+					table_epoch[index] = epoch;
+					table[index] = attacks[i];
+				}
+				else if (table[index] != attacks[i]) { 
+					collision_free = false;
+					break;
+				}
 			}
 
-			return magic; //this magic bitboard(unsinged 64 bit integer) will help us to work with the lookup table in O(1) time
+			if (collision_free) {
+				bishop_lookup_table[sq].fill(0ULL);
+
+				for (size_t i = 0; i < subset_count; i++) { //initializes lookup table for this square
+					index = (subsets[i] * magic) >> shift;
+					//index can be printed out here to test this funciton
+					bishop_lookup_table[sq][index] = attacks[i]; //lookup table gets filled
+					
+				}
+				bishop_magic[sq] = magic;
+				break;
+			}
 		}
 	}
 }
 
 void MoveGenerator::init_bishop_lists(std::array<std::array<int,2>,4> deltas) { //call this function to initialize everything
 	for (int sq = 0; sq < SQUARE_COUNT; sq++) {
-		bishop_magic[sq] = generate_magic(sq, deltas); 
 		bishop_occupancy_mask[sq] = compute_occupancy_mask(sq, BISHOP_DELTAS);
 	}
+
+	generate_magic(deltas); 
 }
 
 void MoveGenerator::init_king_occupancy_masks() { //comptues all possible pseudo-legal moves for king

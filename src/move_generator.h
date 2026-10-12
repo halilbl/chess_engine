@@ -6,10 +6,14 @@
 #include "move.h"
 #include <utility>
 namespace MoveGenerator{
+	inline std::array<u64, SQUARE_COUNT> king_occupancy;
+	inline std::array<u64, SQUARE_COUNT> knight_occupancy;
+	inline std::array<u64, SQUARE_COUNT> bishop_occupancy_mask;
 
-	/*Removed all static/inline keyords. Because, keyword static means something entirely different outside of a class.Static keyword outside of a class means that the spesific object/variable */
+	inline std::array<u64, SQUARE_COUNT> bishop_magic;
+	inline std::array<std::array<u64, MAX_BISHOP_OCP>, SQUARE_COUNT> bishop_lookup_table;
 
-	u64 generate_magic(int sq, std::array<std::array<int,2>,4> deltas);	
+	void generate_magic(std::array<std::array<int,2>,4> deltas);	 //removed int sq
 
 	void init_bishop_lists(std::array<std::array<int,2>,4> deltas);
 
@@ -20,8 +24,6 @@ namespace MoveGenerator{
 	 std::array<u64, MAX_BISHOP_OCP> get_bishop_array(size_t sq);
 
 	 u64 compute_occupancy_mask(int sq, std::array<std::array<int,2>,4> deltas);
-
-	 size_t pseudo_legal_move_list_index;
 
 	 u64 compute_sliding_piece_attack(int sq, u64 ocp, std::array<std::array<int,2>,4>);
 
