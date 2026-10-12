@@ -41,4 +41,6 @@ constexpr std::array<std::array<int,2>,4> BISHOP_DELTAS = {{
 
 constexpr size_t bishop_rook_deltas_size = 4;
 
-constexpr int MAX_SUBSETS_OF_BISHOP_OCP = 512; //maximum of 9 squares available (considering omitting edge squares), hence maximum subset amount  = 2^9
+constexpr int MAX_BISHOP_OCP = 512; //maximum of 9 squares available (considering omitting edge squares), hence maximum subset amount  = 2^9
+
+constexpr int MAX_ROOK_OCP = 4096;
