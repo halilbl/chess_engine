@@ -17,8 +17,8 @@ FetchContent_MakeAvailable(Catch2)
 add_library(chess_core STATIC
     src/board.cpp
     src/move_generator.cpp
-    src/bitboard_utils.cpp
-  )
+    src/bitboard_utils.cpp)
+
 target_include_directories(chess_core PUBLIC src)
 
 add_executable(chess_engine src/main.cpp)
