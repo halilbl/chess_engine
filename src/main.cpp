@@ -25,7 +25,7 @@ int main() {
 	mg::generate_king_moves(Color::WHITE, board, movel, moveli);
 	mg::generate_knight_moves(Color::WHITE, board, movel, moveli);
 
-	bitboard b = bbu::parse_fen("8/8/1K6/pq1p4/k7/8/8/8 w - - 2 57");
+	bitboard b = bbu::parse_fen("p7/8/1K6/pq1p4/k7/8/8/8 w - - 2 57");
 	
 	bbu::print_bit_board(b);
 
